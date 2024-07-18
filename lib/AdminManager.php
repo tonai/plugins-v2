@@ -4,7 +4,8 @@
 	class AdminManager extends AbstractModule {
 		
 		var $database = 'users';
-		var $sault = 'Plugins4ever';
+		// var $sault = 'Plugins4ever';
+    var $sault = '';
 		
 		var $loginError;
 		var $passwordError;
@@ -30,7 +31,7 @@
 			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 			
 			$query = 'INSERT INTO `'.$this->database.'` (`id`, `login`, `password`) VALUES
-				(1, "admin", "c3f1105baf0171ef727255f36e79b2c5");';
+				(1, "admin", "21232f297a57a5a743894a0e4a801fc3");';
 			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		

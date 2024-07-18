@@ -14,15 +14,10 @@
 
 		function __construct($databaseManager) {
       $this->databaseManager = $databaseManager;
+			require_once('lib/AbstractModule.php');
     }
 		
 
-
-		function ModuleManager () {
-			require_once('lib/AbstractModule.php');
-		}
-		
-		
 		
 		function firstInstall() {
 			$query = 'CREATE TABLE IF NOT EXISTS `'.$this->database.'` (

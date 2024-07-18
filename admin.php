@@ -2,7 +2,7 @@
 
 	session_start();
     session_regenerate_id();
-    session_name(md5('B.R.C-E4ever'));
+    session_name(md5('Plugins4ever'));
 	
 	if (!isset($_SESSION['connect']))
 		$_SESSION['connect']=0;

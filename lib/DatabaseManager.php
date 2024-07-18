@@ -31,7 +31,7 @@
 		
 		
 		
-		function BaseDeDonnees() {
+		function __construct() {
 		}
 		
 		
