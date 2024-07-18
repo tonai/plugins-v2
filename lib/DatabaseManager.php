@@ -182,14 +182,14 @@
 				$this->config = simplexml_load_file($this->file);
 				$this->init();
 			}
-			mysql_connect($this->hostname, $this->user, $this->password) or die (mysql_error());
-			mysql_select_db($this->database) or die (mysql_error());
+			$this->mysqli = mysqli_connect($this->hostname, $this->user, $this->password) or die (mysqli_error());
+			mysqli_select_db($this->mysqli, $this->database) or die (mysqli_error());
 		}
 		
 		
 		
 		function deconnexion() {
-			mysql_close();
+			mysqli_close($this->mysqli);
 		}
 		
 		

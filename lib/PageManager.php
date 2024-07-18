@@ -1,4 +1,5 @@
 <?php
+  require_once("lib/AbstractModule.php");
 
 	class PageManager extends AbstractModule {
 		
@@ -12,6 +13,12 @@
 		var $titleError;
 		var $menuError;
 		var $error;
+
+
+
+    function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
 		
 		
 		
@@ -27,11 +34,11 @@
 					`default_page` tinyint(4) NOT NULL DEFAULT 0,
 					PRIMARY KEY (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 			
 			$query = 'INSERT INTO `'.$this->database.'` (`id`, `pid`, `module`, `titre`, `menu`, `data`, `sort`, `default_page`) VALUES
 				(1, 0, 3, "Accueil", "Accueil", \'s:0:"";\', 0, 1);';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -50,9 +57,9 @@
 		
 		
 		function getAdditionalData() {
-			$buff = mysql_query('SELECT id, data FROM '.$this->database);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, data FROM '.$this->database);
 			$additionaldata = array();
-			while ($data = mysql_fetch_array($buff))
+			while ($data = mysqli_fetch_array($buff))
 			{
 				$additionaldata[$data['id']] = unserialize($data['data']);
 			}
@@ -66,16 +73,16 @@
 			$data['class'] = '';
 			if ( intval($page) != 0 )
 			{
-				$buff = mysql_query('SELECT titre, menu, pid FROM page_manager WHERE id="'.$page.'"');
-				$data = mysql_fetch_array($buff);
+				$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT titre, menu, pid FROM page_manager WHERE id="'.$page.'"');
+				$data = mysqli_fetch_array($buff);
 				if ( $data['pid'] == 0 )
 				{
 					$data['class'] = $data['menu'];
 				}
 				else
 				{
-					$buff = mysql_query('SELECT menu FROM page_manager WHERE id="'.$data['pid'].'"');
-					$data2 = mysql_fetch_array($buff);
+					$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT menu FROM page_manager WHERE id="'.$data['pid'].'"');
+					$data2 = mysqli_fetch_array($buff);
 					$data['class'] = $data2['menu'];
 				}
 			}
@@ -85,7 +92,7 @@
 			}
 			elseif ( $page == 'PageManager' )
 			{
-				$data = array( 'titre' => 'Gérer les pages', 'class' => '' );
+				$data = array( 'titre' => 'Gï¿½rer les pages', 'class' => '' );
 			}
 			return $data;
 		}
@@ -93,9 +100,9 @@
 		
 		
 		function getModules() {
-			$buff = mysql_query('SELECT id, module FROM '.$this->database);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, module FROM '.$this->database);
 			$modules = array();
-			while ($data = mysql_fetch_array($buff))
+			while ($data = mysqli_fetch_array($buff))
 			{
 				$modules[$data['id']] = $data['module'];
 			}
@@ -105,16 +112,16 @@
 		
 		
 		function getModule($page) {
-			$buff = mysql_query('SELECT m.module FROM '.$this->moduleManager->database.' m JOIN '.$this->database.' pm ON m.id=pm.module WHERE pm.id="'.$page.'"');
-			$data = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT m.module FROM '.$this->moduleManager->database.' m JOIN '.$this->database.' pm ON m.id=pm.module WHERE pm.id="'.$page.'"');
+			$data = mysqli_fetch_array($buff);
 			return $data['module'];
 		}
 		
 		
 		
 		function getDefaultPage() {
-			$buff = mysql_query('SELECT id FROM '.$this->database.' WHERE default_page=1');
-			$data = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id FROM '.$this->database.' WHERE default_page=1');
+			$data = mysqli_fetch_array($buff);
 			return $data['id'];
 		}
 		
@@ -151,17 +158,17 @@
 						{
 							if (!empty($_POST['titre']) && !empty($_POST['menu']))
 							{
-								$titre = mysql_real_escape_string($_POST['titre']);
-								$menu = mysql_real_escape_string($_POST['menu']);
+								$titre = mysqli_real_escape_string($_POST['titre']);
+								$menu = mysqli_real_escape_string($_POST['menu']);
 								$pid = intval($_POST['pid']);
-								$serializedData = mysql_real_escape_string(serialize($data));
+								$serializedData = mysqli_real_escape_string(serialize($data));
 								
 								$query = 'INSERT INTO '.$this->database.'(titre, menu, module, pid, data) VALUES("'.$titre.'", "'.$menu.'", '.$moduleId.', '.$pid.', "'.$serializedData.'")';
-								mysql_query($query) or die(mysql_error());
+								mysqli_query($this->databaseManager->mysqli, $query) or die(mysqli_error());
 								
-								// Exécution de la méthode d'installation du module concerné (installation BDD par exemple)
+								// Exï¿½cution de la mï¿½thode d'installation du module concernï¿½ (installation BDD par exemple)
 								$this->moduleManager->install($moduleId, $data);
-								$_SESSION[$this->getName()] = 'La nouvelle page à bien été ajouté.';
+								$_SESSION[$this->getName()] = 'La nouvelle page ï¿½ bien ï¿½tï¿½ ajoutï¿½.';
 								header('Location: admin.php?page='.$this->getName());
 							}
 							if (empty($_POST['titre']))
@@ -175,7 +182,7 @@
 						}
 						else
 						{
-							$this->dataError = 'Les champs supplémentaires doivent être rempli';
+							$this->dataError = 'Les champs supplï¿½mentaires doivent ï¿½tre rempli';
 						}
 					}
 					break;
@@ -188,16 +195,16 @@
 						$this->error = '';
 						
 						$default = 0;
-						$buff = mysql_query('SELECT id, sort FROM '.$this->database);
-						while($data = mysql_fetch_array($buff)) {
+						$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, sort FROM '.$this->database);
+						while($data = mysqli_fetch_array($buff)) {
 							$id = intval($data['id']);
 							if (isset($_POST['delete_'.$id]))
 							{
-								mysql_query('DELETE FROM '.$this->database.' WHERE id='.$id) or die(mysql_error());
+								mysqli_query($this->databaseManager->mysqli, 'DELETE FROM '.$this->database.' WHERE id='.$id) or die(mysqli_error());
 								
-								// Exécution de la méthode de désinstallation du module concerné
+								// Exï¿½cution de la mï¿½thode de dï¿½sinstallation du module concernï¿½
 								$this->moduleManager->modules[$id]->uninstall();
-								$this->delete = 'Suppression(s) effectuée(s).';
+								$this->delete = 'Suppression(s) effectuï¿½e(s).';
 							}
 							else
 							{
@@ -214,18 +221,18 @@
 								if (!empty($update))
 								{
 									$query = 'UPDATE '.$this->database.' SET '.implode(',', $update).' WHERE id='.$id;
-									mysql_query($query) or die(mysql_error());
-									$this->update = 'Modification(s) effectuée(s).';
+									mysqli_query($this->databaseManager->mysqli, $query) or die(mysqli_error());
+									$this->update = 'Modification(s) effectuï¿½e(s).';
 								}
 							}
 						}
 						if ($default!=0)
 						{
-							mysql_query('UPDATE '.$this->database.' SET default_page=0 WHERE id<>'.$default) or die(mysql_error());
+							mysqli_query($this->databaseManager->mysqli, 'UPDATE '.$this->database.' SET default_page=0 WHERE id<>'.$default) or die(mysqli_error());
 						}
 						else
 						{
-							$this->error = 'Vous devez définir la page par défaut.';
+							$this->error = 'Vous devez dï¿½finir la page par dï¿½faut.';
 						}
 					}
 					break;
@@ -242,11 +249,11 @@
 					{
 						$module = $_GET['module'];
 						$moduleId = $this->moduleManager->getModuleId($module);
-						$buff = mysql_query('SELECT id FROM '.$this->database.' WHERE module='.$moduleId);
+						$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id FROM '.$this->database.' WHERE module='.$moduleId);
 						
 						$i = 0;
 						$moduleInfos = array();
-						while ($data = mysql_fetch_array($buff))
+						while ($data = mysqli_fetch_array($buff))
 						{
 							$moduleInfos[$i] = array();
 							$moduleInfos[$i]['dir'] = $this->moduleManager->modules[$data['id']]->rootDir;
@@ -362,7 +369,7 @@
 		
 		function displayAdmin($page, $action) {
 			$modules = $this->moduleManager->getAllModules();
-			$buff = mysql_query('SELECT id, menu, sort FROM '.$this->database.' WHERE pid=0');
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu, sort FROM '.$this->database.' WHERE pid=0');
 
 ?>
 			<script type="text/javascript" >
@@ -422,7 +429,7 @@ function loadAdditionalData(select) {
 							<option value="0" >Racine</option>
 <?php
 
-			while($data = mysql_fetch_array($buff)) {
+			while($data = mysqli_fetch_array($buff)) {
 				$selected = '';
 				if ( isset($_POST['pid']) && $_POST['pid'] == $data['id'] && !isset($_SESSION[$this->getName()]) )
 				{
@@ -462,13 +469,13 @@ for (var element in value)
 			</form>
 			<form action="?page=<?php echo $this->getName(); ?>&action=alter" method="post">
 				<fieldset>
-					<legend>Gérer les pages</legend>
+					<legend>Gï¿½rer les pages</legend>
 					<table>
 						<thead>
 							<tr>
 								<th>Pages</th>
 								<th class="option" >Ordre</th>
-								<th class="option" >Page par défaut</th>
+								<th class="option" >Page par dï¿½faut</th>
 								<th class="option" >Supprimer</th>
 							</tr>
 						</thead>
@@ -476,10 +483,10 @@ for (var element in value)
 <?php
 
 			unset($_SESSION[$this->getName()]);
-			$buff = mysql_query('SELECT id, menu, sort, default_page FROM '.$this->database.' WHERE pid=0 ORDER BY sort');
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu, sort, default_page FROM '.$this->database.' WHERE pid=0 ORDER BY sort');
 			
 			$i = 1;
-			while($data = mysql_fetch_array($buff)) {
+			while($data = mysqli_fetch_array($buff)) {
 				echo '<tr>';
 				echo '<td>'.$i.'. '.$data['menu'].'</td>';
 				echo '<td class="option" ><input type="text" size="2" name="sort_'.$data['id'].'" value="'.$data['sort'].'" /></td>';
@@ -494,8 +501,8 @@ for (var element in value)
 				echo '<td class="option" ><input type="radio" name="default_page" value="'.$data['id'].'" '.$checked.' /></td>';
 				echo '<td class="option" ><input type="checkbox" name="delete_'.$data['id'].'" /></td>';
 				echo '</tr>';
-				$buff2 = mysql_query('SELECT id, menu, sort, default_page FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
-				while($data2 = mysql_fetch_array($buff2)) {
+				$buff2 = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu, sort, default_page FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
+				while($data2 = mysqli_fetch_array($buff2)) {
 					echo '<tr>';
 					echo '<td><span>'.$data2['menu'].'</span></td>';
 					echo '<td class="option" ><input type="text" size="2" name="sort_'.$data2['id'].'" value="'.$data2['sort'].'" /></td>';
@@ -529,12 +536,12 @@ for (var element in value)
 				<ul>
 <?php
 
-			$buff = mysql_query('SELECT id, menu FROM '.$this->database.' WHERE pid=0 ORDER BY sort');
-			while($data = mysql_fetch_array($buff)) {
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu FROM '.$this->database.' WHERE pid=0 ORDER BY sort');
+			while($data = mysqli_fetch_array($buff)) {
 				if (!$modules[$data['id']]->displayMenu($modules, $data))
 				{
-					$buff2 = mysql_query('SELECT count(id) AS nb_sous_menu FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
-					$data2 = mysql_fetch_array($buff2);
+					$buff2 = mysqli_query($this->databaseManager->mysqli, 'SELECT count(id) AS nb_sous_menu FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
+					$data2 = mysqli_fetch_array($buff2);
 					if ($data2['nb_sous_menu'] == 0)
 					{
 						$title = htmlentities($data['menu']);
@@ -545,8 +552,8 @@ for (var element in value)
 						$idMenu = $this->sanitize($data['menu']);
 						echo '<li class="'.strtolower($this->sanitize($data['menu'])).'" ><a href="?page='.$data['id'].'" title="'.htmlentities($data['menu']).'" >'.$data['menu'].'</a>';
 						echo '<ul>';
-						$buff2 = mysql_query('SELECT id, menu, module FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
-						while($data2 = mysql_fetch_array($buff2)) {
+						$buff2 = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu, module FROM '.$this->database.' WHERE pid='.$data['id'].' ORDER BY sort');
+						while($data2 = mysqli_fetch_array($buff2)) {
 							if (!$modules[$data2['id']]->displayMenu($modules, $data))
 							{
 								$title = htmlentities($data2['menu']);
@@ -568,8 +575,8 @@ for (var element in value)
 		
 		
 		function displayAdminMenu($modules) {
-			$buff = mysql_query('SELECT id, menu FROM '.$this->database);
-			while ($data = mysql_fetch_array($buff))
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, menu FROM '.$this->database);
+			while ($data = mysqli_fetch_array($buff))
 			{
 				$modules[$data['id']]->displayMenuAdmin($data['id'], $data['menu']);
 			}
@@ -583,7 +590,7 @@ for (var element in value)
 			{
 
 ?>
-			<li><a href="?page=<?php echo $this->getName(); ?>" title="Gérer les pages" >Gérer les pages</a></li>
+			<li><a href="?page=<?php echo $this->getName(); ?>" title="Gï¿½rer les pages" >Gï¿½rer les pages</a></li>
 <?php
 
 			}

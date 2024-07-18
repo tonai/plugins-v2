@@ -1,10 +1,17 @@
 <?php
+  require_once("lib/AbstractModule.php");
 
 	class ContentManager extends AbstractModule {
 		
 		var $database = 'content_manager';
 		
-		
+
+
+		function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
+
+
 		
 		function firstInstall() {
 			$query = 'CREATE TABLE IF NOT EXISTS `'.$this->database.'` (
@@ -13,11 +20,11 @@
 					`texte` text NOT NULL,
 					PRIMARY KEY (`id`)
 				) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 			
 			$query = 'INSERT INTO `'.$this->database.'` (`id`, `page`, `texte`) VALUES
 				(1, 1, "&lt;p style=&quot;text-align: center;&quot;&gt;&lt;a href=&quot;admin.php&quot;&gt;Connectez-vous&lt;/a&gt;&amp;nbsp;pour administrer cette page et l&#039;ensemble du site.&lt;/p&gt;&lt;p style=&quot;text-align: center;&quot;&gt;Une fois connect&amp;eacute;, changer vos identifiant et password de connexion.&lt;/p&gt;");';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -29,16 +36,16 @@
 					if (isset($_POST['elm1']))
 					{
 						$texte = htmlentities($_POST['elm1'], ENT_QUOTES);
-						$buff = mysql_query('SELECT id FROM '.$this->database.' WHERE page="'.$page.'"');
-						$donnees = mysql_fetch_array($buff);
+						$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id FROM '.$this->database.' WHERE page="'.$page.'"');
+						$donnees = mysqli_fetch_array($buff);
 						if(empty($donnees))
 						{
-							mysql_query('INSERT INTO '.$this->database.' (id, page, texte) VALUES("", "'.$page.'", "'.$texte.'")') OR DIE (mysql_error());
+							mysqli_query($this->databaseManager->mysqli, 'INSERT INTO '.$this->database.' (id, page, texte) VALUES("", "'.$page.'", "'.$texte.'")') OR DIE (mysqli_error());
 						}
 						else
 						{
 							$id = $donnees['id'];
-							mysql_query('UPDATE '.$this->database.' SET texte = "'.$texte.'" WHERE id = '.$id) OR DIE (mysql_error());
+							mysqli_query($this->databaseManager->mysqli, 'UPDATE '.$this->database.' SET texte = "'.$texte.'" WHERE id = '.$id) OR DIE (mysqli_error());
 						}
 					}
 					break;
@@ -48,16 +55,16 @@
 		
 		
 		function displayPage($page, $action) {
-			$buff = mysql_query('SELECT texte FROM '.$this->database.' WHERE page="'.$page.'"');
-			$donnees = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT texte FROM '.$this->database.' WHERE page="'.$page.'"');
+			$donnees = mysqli_fetch_array($buff);
 			echo html_entity_decode($donnees['texte']);
 		}
 		
 		
 		
 		function displayAdmin($page, $action) {
-			$buff = mysql_query('SELECT texte FROM '.$this->database.' WHERE page="'.$page.'"');
-			$donnees = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT texte FROM '.$this->database.' WHERE page="'.$page.'"');
+			$donnees = mysqli_fetch_array($buff);
 
 ?>
 				<script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>

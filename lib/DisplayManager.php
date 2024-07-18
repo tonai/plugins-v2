@@ -29,7 +29,9 @@
 			'_' => '/\s/'
 		);
 		
-		
+		function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
 		
 		function init( $mode = false ) {
 			$this->mode = $mode;
@@ -37,16 +39,16 @@
 			$this->action = ((isset($_GET['action']))? $_GET['action']: ((isset($_POST['action']))? $_POST['action']: false));
 			
 			require_once('lib/ModuleManager.php');
-			$this->moduleManager = new ModuleManager();
+			$this->moduleManager = new ModuleManager($this->databaseManager);
 			
 			require_once('lib/PageManager.php');
-			$this->pageManager = new PageManager();
+			$this->pageManager = new PageManager($this->databaseManager);
 			$this->moduleManager->addModule($this->pageManager);
 			
 			if ( $this->mode=='admin' )
 			{
 				require_once('lib/AdminManager.php');
-				$this->adminManager = new AdminManager();
+				$this->adminManager = new AdminManager($this->databaseManager);
 				$this->moduleManager->addModule($this->adminManager);
 			}
 			

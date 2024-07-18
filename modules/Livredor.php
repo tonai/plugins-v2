@@ -8,6 +8,12 @@
 		var $delete;
 		var $nameError;
 		var $messageError;
+
+
+
+    function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
 		
 		
 		
@@ -18,14 +24,14 @@
 				`message` text NOT NULL,
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
 		
 		function uninstall() {
 			$query = 'DROP TABLE IF EXISTS `'.$this->database.'`;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -46,7 +52,7 @@
 			return array(
 				'database' => array(
 					'type' => 'text',
-					'label' => htmlentities('Base de données'),
+					'label' => htmlentities('Base de donnï¿½es'),
 				),
 			);
 		}
@@ -65,11 +71,11 @@
 						
 						if (!empty($_POST['nom']) and !empty($_POST['message']))
 						{
-							$nom = mysql_real_escape_string($_POST['nom']);
-							$message = mysql_real_escape_string($_POST['message']);
-							mysql_query('INSERT INTO '.$this->database.' VALUES("", "'.$nom.'", "'.$message.'")') OR DIE (mysql_error());
+							$nom = mysqli_real_escape_string($_POST['nom']);
+							$message = mysqli_real_escape_string($_POST['message']);
+							mysqli_query($this->databaseManager->mysqli, 'INSERT INTO '.$this->database.' VALUES("", "'.$nom.'", "'.$message.'")') OR DIE (mysqli_error());
 							
-							$this->save = 'Votre message à bien été enregistré.';
+							$this->save = 'Votre message ï¿½ bien ï¿½tï¿½ enregistrï¿½.';
 						}
 						if (empty($_POST['nom']))
 						{
@@ -93,14 +99,14 @@
 					if (isset($_POST['submit']))
 					{
 						$this->delete = '';
-						$reponse=mysql_query('SELECT id FROM '.$this->database);
-						while($donnees=mysql_fetch_array($reponse))
+						$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT id FROM '.$this->database);
+						while($donnees=mysqli_fetch_array($reponse))
 						{
 							$id = intval($donnees['id']);
 							if(isset($_POST[$id]))
 							{
-								mysql_query('DELETE FROM '.$this->database.' WHERE id='.$id) OR DIE (mysql_error());
-								$this->delete = 'Suppression(s) effectuée(s)..';
+								mysqli_query($this->databaseManager->mysqli, 'DELETE FROM '.$this->database.' WHERE id='.$id) OR DIE (mysqli_error());
+								$this->delete = 'Suppression(s) effectuï¿½e(s)..';
 							}
 						}
 					}
@@ -146,8 +152,8 @@
 			}
 			else
 			{
-				$reponse=mysql_query('SELECT COUNT(*) AS nb_messages FROM '.$this->database);
-				$donnees=mysql_fetch_row($reponse);
+				$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT COUNT(*) AS nb_messages FROM '.$this->database);
+				$donnees=mysqli_fetch_row($reponse);
 				$nb_message=$donnees[0];
 				$messageParPage=10;
 				
@@ -166,8 +172,8 @@
 					
 					
 					/********affichage des messages********/
-					$reponse=mysql_query('SELECT * FROM '.$this->database.' ORDER BY id DESC LIMIT '.$message.','.$messageParPage.' ');
-					while($donnees=mysql_fetch_array($reponse))
+					$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' ORDER BY id DESC LIMIT '.$message.','.$messageParPage.' ');
+					while($donnees=mysqli_fetch_array($reponse))
 					{
 						echo '<dl>';
 						echo '<dt>';
@@ -178,7 +184,7 @@
 				}
 				else
 				{
-					echo '<p>Il n\'y a pas encore de message enregistré.</p>';
+					echo '<p>Il n\'y a pas encore de message enregistrï¿½.</p>';
 				}
 					
 				echo '<p class="center" ><a href="?page='.$page.'&action=ecrire" class="right" >Ecrire un message</a><a href="?page='.$page.'&action=ecrire" class="left" >Ecrire un message</a>';
@@ -201,9 +207,9 @@
 					if ($pageActuelle!=1)
 					{
 						$pagePrec=$pageActuelle-1;
-						echo '<a href="?page='.$page.'&pager='.$pagePrec.'" title="page précédante"><</a>&nbsp&nbsp;';
+						echo '<a href="?page='.$page.'&pager='.$pagePrec.'" title="page prï¿½cï¿½dante"><</a>&nbsp&nbsp;';
 					}
-					echo '<a href="?page='.$page.'&pager=1" title="première page">1..</a>&nbsp&nbsp;';
+					echo '<a href="?page='.$page.'&pager=1" title="premiï¿½re page">1..</a>&nbsp&nbsp;';
 					$i=2;
 					if ($pageActuelle<=5)
 					{
@@ -226,7 +232,7 @@
 						echo '<a href="?page='.$page.'&pager='.$i.'">'.$i.'</a>&nbsp&nbsp;';
 					}
 					if ($pagesTotales!=1)
-						echo '<a href="?page='.$page.'&pager='.$pagesTotales.'" title="dernière page">..'.$pagesTotales.'</a>&nbsp&nbsp;';
+						echo '<a href="?page='.$page.'&pager='.$pagesTotales.'" title="derniï¿½re page">..'.$pagesTotales.'</a>&nbsp&nbsp;';
 					if ($pageActuelle!=$pagesTotales)
 					{
 						$pageSuiv=$pageActuelle+1;
@@ -240,8 +246,8 @@
 		
 		
 		function displayAdmin($page, $action) {
-			$reponse=mysql_query('SELECT COUNT(*) AS nb_messages FROM '.$this->database);
-			$donnees=mysql_fetch_row($reponse);
+			$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT COUNT(*) AS nb_messages FROM '.$this->database);
+			$donnees=mysqli_fetch_row($reponse);
 			$nb_message=$donnees[0];
 			
 			if ($nb_message!=0)
@@ -261,8 +267,8 @@
 				
 				/********affichage des messages********/
 				echo '<form action="?page='.$page.'&action=suppression" method="post">';
-				$reponse=mysql_query('SELECT * FROM '.$this->database.' ORDER BY id DESC LIMIT '.$message.','.$messageParPage.' ');
-				while($donnees=mysql_fetch_array($reponse))
+				$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' ORDER BY id DESC LIMIT '.$message.','.$messageParPage.' ');
+				while($donnees=mysqli_fetch_array($reponse))
 				{
 					echo '<dl>';
 					echo '<dt>';
@@ -271,7 +277,7 @@
 					echo '<dd>'.nl2br(htmlentities($donnees['message'])).'</dd>';
 					echo '</dl>';
 				}
-				echo '<p class="center" ><input type ="submit" name="submit" value="Supprimé les messages séléctionnés" />';
+				echo '<p class="center" ><input type ="submit" name="submit" value="Supprimï¿½ les messages sï¿½lï¿½ctionnï¿½s" />';
 				echo '<span class="error">'.$this->delete.'</span>';
 				echo '</p></form>';
 				echo '<hr />';
@@ -296,9 +302,9 @@
 					if ($pageActuelle!=1)
 					{
 						$pagePrec=$pageActuelle-1;
-						echo '<a href="?page='.$page.'&pager='.$pagePrec.'" title="page précédante"><</a>&nbsp&nbsp;';
+						echo '<a href="?page='.$page.'&pager='.$pagePrec.'" title="page prï¿½cï¿½dante"><</a>&nbsp&nbsp;';
 					}
-					echo '<a href="?page='.$page.'&pager=1" title="première page">1..</a>&nbsp&nbsp;';
+					echo '<a href="?page='.$page.'&pager=1" title="premiï¿½re page">1..</a>&nbsp&nbsp;';
 					$i=2;
 					if ($pageActuelle<=5)
 					{
@@ -321,7 +327,7 @@
 						echo '<a href="?page='.$page.'&pager='.$i.'">'.$i.'</a>&nbsp&nbsp;';
 					}
 					if ($pagesTotales!=1)
-						echo '<a href="?page='.$page.'&pager='.$pagesTotales.'" title="dernière page">..'.$pagesTotales.'</a>&nbsp&nbsp;';
+						echo '<a href="?page='.$page.'&pager='.$pagesTotales.'" title="derniï¿½re page">..'.$pagesTotales.'</a>&nbsp&nbsp;';
 					if ($pageActuelle!=$pagesTotales)
 					{
 						$pageSuiv=$pageActuelle+1;
@@ -332,7 +338,7 @@
 			}
 			else
 			{
-				echo '<p>Il n\'y a pas encore de message enregistré.<br/>';
+				echo '<p>Il n\'y a pas encore de message enregistrï¿½.<br/>';
 				echo '<span class="error">'.$this->delete.'</span></p>';
 			}
 		}

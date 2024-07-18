@@ -2,7 +2,7 @@
 
 	class Calendar extends AbstractModule {
 	
-		var $tableauMois=array('janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre');
+		var $tableauMois=array('janvier','fï¿½vrier','mars','avril','mai','juin','juillet','aoï¿½t','septembre','octobre','novembre','dï¿½cembre');
 		var $tableauJour=array('lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche');
 		var $database;
 		
@@ -10,6 +10,12 @@
 		var $dateError;
 		var $insert;
 		var $delete;
+
+
+
+    function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
 		
 		
 		
@@ -25,14 +31,14 @@
 				`lien` varchar(100) NOT NULL DEFAULT \'\',
 				PRIMARY KEY (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
 		
 		function uninstall() {
 			$query = 'DROP TABLE IF EXISTS `'.$this->database.'`;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -53,7 +59,7 @@
 			return array(
 				'database' => array(
 					'type' => 'text',
-					'label' => htmlentities('Base de données'),
+					'label' => htmlentities('Base de donnï¿½es'),
 				),
 			);
 		}
@@ -84,9 +90,9 @@
 						{
 							$nom = htmlentities($_POST['nom'], ENT_QUOTES);
 							$date = $annee.'-'.$mois.'-'.$jour;
-							$reponse = mysql_query('SELECT date FROM '.$this->database);
+							$reponse = mysqli_query($this->databaseManager->mysqli, 'SELECT date FROM '.$this->database);
 							$i = 0;
-							while ($donnees = mysql_fetch_array($reponse))
+							while ($donnees = mysqli_fetch_array($reponse))
 							{
 								$dateBase = explode('-',$donnees['date']);
 								$anneeBase = $dateBase[0];
@@ -95,7 +101,7 @@
 								if ($anneeBase == $annee && $moisBase==$mois && $jourBase==$jour)
 									$i=1;
 							}
-							$description = mysql_real_escape_string($_POST['description']);
+							$description = mysqli_real_escape_string($_POST['description']);
 							if (isset($_POST['horaire']))
 							{
 								$horaire = $_POST['horaire'];
@@ -106,17 +112,17 @@
 							{
 								$passage = $heure.':'.$minute.':00';
 							}
-							$lieu = mysql_real_escape_string($_POST['lieu']);
-							$adresse = mysql_real_escape_string($_POST['adresse']);
-							$lien = mysql_real_escape_string($_POST['lien']);
+							$lieu = mysqli_real_escape_string($_POST['lieu']);
+							$adresse = mysqli_real_escape_string($_POST['adresse']);
+							$lien = mysqli_real_escape_string($_POST['lien']);
 							if ($i == 0)
 							{
-								mysql_query('INSERT INTO '.$this->database.' VALUES("", "'.$nom.'", "'.$date.'", "'.$description.'", "'.$passage.'", "'.$lieu.'", "'.$adresse.'", "'.$lien.'")');
-								$this->insert = 'L\'évènement a bien été ajouté.';
+								mysqli_query($this->databaseManager->mysqli, 'INSERT INTO '.$this->database.' VALUES("", "'.$nom.'", "'.$date.'", "'.$description.'", "'.$passage.'", "'.$lieu.'", "'.$adresse.'", "'.$lien.'")');
+								$this->insert = 'L\'ï¿½vï¿½nement a bien ï¿½tï¿½ ajoutï¿½.';
 							}
 							else
 							{
-								$this->dateError = 'Un évènement à cette date existe déjà.';
+								$this->dateError = 'Un ï¿½vï¿½nement ï¿½ cette date existe dï¿½jï¿½.';
 							}
 						}
 						else
@@ -132,14 +138,14 @@
 						$this->delete = '';
 						
 						$date = date('Y-m-d');
-						$reponse=mysql_query('SELECT * FROM '.$this->database.' WHERE date >= "'.$date.'"');
-						while ($data=mysql_fetch_array($reponse))
+						$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' WHERE date >= "'.$date.'"');
+						while ($data=mysqli_fetch_array($reponse))
 						{
 							$id = intval($data['id']);
 							if ( isset($_POST['delete_'.$id]) )
 							{
-								mysql_query('DELETE FROM '.$this->database.' WHERE id = '.$id);
-								$this->delete = 'Suppression(s) effectuée(s).';
+								mysqli_query($this->databaseManager->mysqli, 'DELETE FROM '.$this->database.' WHERE id = '.$id);
+								$this->delete = 'Suppression(s) effectuï¿½e(s).';
 							}
 						}
 					}
@@ -152,9 +158,9 @@
 		function displayPage($page, $action) {
 			if ( $action == 'ajax' && isset($_POST['date']) )
 			{
-				$date = mysql_real_escape_string($_POST['date']);
-				$reponse = mysql_query('SELECT * FROM '.$this->database.' WHERE date="'.$date.'"');
-				$donnees = mysql_fetch_array($reponse);
+				$date = mysqli_real_escape_string($_POST['date']);
+				$reponse = mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' WHERE date="'.$date.'"');
+				$donnees = mysqli_fetch_array($reponse);
 				
 				$evenement=$donnees['nom'];
 				$descriptionEvenement = nl2br(htmlentities($donnees['description']));
@@ -227,7 +233,7 @@
 					$premierJour=7;
 				$bissextile=date('L');
 				
-				/* Calcul du Lundi de Pâques, Jeudi de l'Ascension et Lundi de Pentecôte */
+				/* Calcul du Lundi de Pï¿½ques, Jeudi de l'Ascension et Lundi de Pentecï¿½te */
 				$n=(int)$annee-1900;
 				$a=$this->divisionEuclidienne($n, 19, 1);
 				$x=$a*7+1;
@@ -271,14 +277,14 @@
 					$moisPentecote=6;
 				}
 				
-				/* on récupère les évènements du mois dans la base  */
+				/* on rï¿½cupï¿½re les ï¿½vï¿½nements du mois dans la base  */
 				$date1=$annee.'-'.$moisActuel.'-01';
 				$date2=$annee.'-'.$moisActuel.'-31';
-				$reponse=mysql_query('SELECT * FROM '.$this->database.' WHERE date >= "'.$date1.'" AND date <="'.$date2.'"');
+				$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' WHERE date >= "'.$date1.'" AND date <="'.$date2.'"');
 				$nbEvenement=0;
 				$jourEvenement=array('');
 				$evenement=array('');
-				while ($donnees=mysql_fetch_array($reponse))
+				while ($donnees=mysqli_fetch_array($reponse))
 				{
 					$dateEvenement=explode('-',$donnees['date']);
 					$jourEvenement[$nbEvenement]=$dateEvenement[2];
@@ -312,7 +318,7 @@
 					$moisSuivant=($moisActuel+1);
 				echo '<caption>';
 				if ($moisActuel!=$premierMois)
-					echo '<a href="?page='.$page.'&mois='.$moisPrecedant.'" class="left" title="mois précédent" ><<</a>';
+					echo '<a href="?page='.$page.'&mois='.$moisPrecedant.'" class="left" title="mois prï¿½cï¿½dent" ><<</a>';
 				else
 					echo '<span class="left" >&nbsp;&nbsp;</span>';
 				if ($moisActuel!=($premierMois-1))
@@ -382,27 +388,27 @@
 								{
 									echo '<td class="ferie">Nouvel an</td>';
 								}
-								elseif ($moisActuel==5 && $jour==1)								//1er mai -> fête du travail
+								elseif ($moisActuel==5 && $jour==1)								//1er mai -> fï¿½te du travail
 								{
-									echo '<td class="ferie">Fête du travail</td>';
+									echo '<td class="ferie">Fï¿½te du travail</td>';
 								}
 								elseif ($moisActuel==5 && $jour==8)								//8 mai -> armistice WWII
 								{
 									echo '<td class="ferie">Armistice WWII</td>';
 								}
-								elseif ($moisActuel==7 && $jour==14)							//14 juillet -> fête nationale
+								elseif ($moisActuel==7 && $jour==14)							//14 juillet -> fï¿½te nationale
 								{
-									echo '<td class="ferie">Fête nationale</td>';
+									echo '<td class="ferie">Fï¿½te nationale</td>';
 								}
 								elseif ($moisActuel==11 && $jour==11)							//11 novembre -> armistice WWI
 								{
 									echo '<td class="ferie">Armistice WWI</td>';
 								}
-								elseif ($moisActuel==12 && $jour==25)							//25 décembre -> noël
+								elseif ($moisActuel==12 && $jour==25)							//25 dï¿½cembre -> noï¿½l
 								{
-									echo '<td class="ferie">Noël</td>';
+									echo '<td class="ferie">Noï¿½l</td>';
 								}
-								elseif ($moisActuel==8 && $jour==15)							//15 août -> assomption
+								elseif ($moisActuel==8 && $jour==15)							//15 aoï¿½t -> assomption
 								{
 									echo '<td class="ferie">Assomption</td>';
 								}
@@ -410,17 +416,17 @@
 								{
 									echo '<td class="ferie">Toussaint</td>';
 								}
-								elseif ($moisActuel==$moisPaques && $jour==$jourPaques)			//Lundi de Pâques
+								elseif ($moisActuel==$moisPaques && $jour==$jourPaques)			//Lundi de Pï¿½ques
 								{
-									echo '<td class="ferie">Lundi de Pâques</td>';
+									echo '<td class="ferie">Lundi de Pï¿½ques</td>';
 								}
 								elseif ($moisActuel==$moisAscension && $jour==$jourAscension)	//Jeudi de l'Ascension
 								{
 									echo '<td class="ferie">Jeudi de l\'Ascension</td>';
 								}
-								elseif ($moisActuel==$moisPentecote && $jour==$jourPentecote)	//Lundi de Pentecôte
+								elseif ($moisActuel==$moisPentecote && $jour==$jourPentecote)	//Lundi de Pentecï¿½te
 								{
-									echo '<td class="ferie">Lundi de Pentecôte</td>';
+									echo '<td class="ferie">Lundi de Pentecï¿½te</td>';
 								}
 								elseif ($i==6 || $i==7)
 								{
@@ -456,7 +462,7 @@
 ?>
 			<form method="post" action="?page=<?php echo $page; ?>&action=addEvent">
 				<fieldset>
-					<legend>Ajouter un évènement</legend>
+					<legend>Ajouter un ï¿½vï¿½nement</legend>
 					<p>
 						<label for="event-nom">
 							<strong>
@@ -567,23 +573,23 @@
 						<span class="erreur"><?php echo $this->insert; ?></span>
 					</p>
 					<p class="petit">
-						Les champs suivis de (*) doivent obligatoirement être renseignés.<br/>
-						/!\ En cas d'oubli, la date est automatiquement fixé par défault au 1er janvier de l'année en cours.<br/>
-						Le champ suivi de (**) peut ne pas être renseigné en cochant la case "Ne pas renseigner l'horaire de passage".<br/>
-						/!\ En cas d'oubli, l'heure de passage est automatiquement fixé par défault à 00H00.
+						Les champs suivis de (*) doivent obligatoirement ï¿½tre renseignï¿½s.<br/>
+						/!\ En cas d'oubli, la date est automatiquement fixï¿½ par dï¿½fault au 1er janvier de l'annï¿½e en cours.<br/>
+						Le champ suivi de (**) peut ne pas ï¿½tre renseignï¿½ en cochant la case "Ne pas renseigner l'horaire de passage".<br/>
+						/!\ En cas d'oubli, l'heure de passage est automatiquement fixï¿½ par dï¿½fault ï¿½ 00H00.
 					</p>
 				</fieldset>
 			</form>
 
 			<form method="post" action="?page=<?php echo $page; ?>&action=deleteEvent">
 				<fieldset>
-					<legend>Supprimer un évènement</legend>
+					<legend>Supprimer un ï¿½vï¿½nement</legend>
 					<ul>
 <?php
 
 			$date = date('Y-m-d');
-			$reponse=mysql_query('SELECT * FROM '.$this->database.' WHERE date >= "'.$date.'"');
-			while ($donnees=mysql_fetch_array($reponse))
+			$reponse=mysqli_query($this->databaseManager->mysqli, 'SELECT * FROM '.$this->database.' WHERE date >= "'.$date.'"');
+			while ($donnees=mysqli_fetch_array($reponse))
 			{
 				$date = explode('-', $donnees['date']);
 				echo '<li><input type="checkbox" name="delete_'.$donnees['id'].'" id="event-'.$donnees['id'].'" /><label for="event-'.$donnees['id'].'" > '.$donnees['nom'].' ('.$date[2].'/'.$date[1].'/'.$date[0].')</label></li>';

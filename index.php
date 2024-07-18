@@ -18,7 +18,7 @@
 	{
 		$databaseManager->connexion();
 		
-		$displayManager = new DisplayManager();
+		$displayManager = new DisplayManager($databaseManager);
 		$displayManager->init();
 		$displayManager->display();
 		

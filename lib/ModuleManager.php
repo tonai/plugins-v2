@@ -10,8 +10,14 @@
 		var $install;
 		var $uninstall;
 		
+
+
+		function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
 		
-		
+
+
 		function ModuleManager () {
 			require_once('lib/AbstractModule.php');
 		}
@@ -25,13 +31,13 @@
 					`page` tinyint(4) NOT NULL,
 					PRIMARY KEY (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 			
 			$query = 'INSERT INTO `'.$this->database.'` (`id`, `module`, `page`) VALUES
 				(1, "AdminManager", 0),
 				(2, "PageManager", 0),
 				(3, "ContentManager", 1);';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -43,8 +49,8 @@
 		
 		
 		function getModuleId ($module) {
-			$buff = mysql_query('SELECT id FROM '.$this->database.' WHERE module="'.$module.'"');
-			$data = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id FROM '.$this->database.' WHERE module="'.$module.'"');
+			$data = mysqli_fetch_array($buff);
 			return $data['id'];
 		}
 		
@@ -52,8 +58,8 @@
 		
 		function getAllModules () {
 			$modules = array();
-			$buff = mysql_query('SELECT id, module FROM '.$this->database.' WHERE page=1');
-			while ($data = mysql_fetch_array($buff))
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, module FROM '.$this->database.' WHERE page=1');
+			while ($data = mysqli_fetch_array($buff))
 			{
 				$modules[$data['id']] = $data['module'];
 			}
@@ -75,7 +81,7 @@
 				{
 					include_once('modules/'.$moduleName.'.php');
 				}
-				$this->modules[$pageId] = new $moduleName();
+				$this->modules[$pageId] = new $moduleName($this->databaseManager);
 			}
 	    }
 		
@@ -99,8 +105,8 @@
 		
 		
 		function install($moduleId, $installData) {
-			$buff = mysql_query('SELECT module FROM '.$this->database.' WHERE id='.$moduleId);
-			$data = mysql_fetch_array($buff);
+			$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT module FROM '.$this->database.' WHERE id='.$moduleId);
+			$data = mysqli_fetch_array($buff);
 			$module = new $data['module']();
 			$module->install($installData);
 		}
@@ -143,9 +149,9 @@
 					case 'install':
 						if (isset($_POST['submit']))
 						{
-							$buff = mysql_query('SELECT module FROM '.$this->database.' WHERE page=1');
+							$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT module FROM '.$this->database.' WHERE page=1');
 							$modules = array();
-							while($data = mysql_fetch_array($buff)) {
+							while($data = mysqli_fetch_array($buff)) {
 								$installedModules[$data['module']]=false;
 							}
 							
@@ -181,8 +187,8 @@
 									if ($installed==false)
 									{
 										$query = 'INSERT INTO `'.$this->database.'` (`module`, `page`) VALUES ("'.$module.'", 1);';
-										mysql_query($query) OR DIE (mysql_error());
-										$this->install = 'Installation(s) effectuée(s).';
+										mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
+										$this->install = 'Installation(s) effectuï¿½e(s).';
 									}
 								}
 							}
@@ -192,8 +198,8 @@
 								if ($uninstall)
 								{
 									$query = 'DELETE FROM `'.$this->database.'` WHERE module = "'.$installedModule.'"';
-									mysql_query($query) OR DIE (mysql_error());
-									$this->uninstall = 'Désinstallation(s) effectuée(s).';
+									mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
+									$this->uninstall = 'Dï¿½sinstallation(s) effectuï¿½e(s).';
 								}
 							}
 						}
@@ -234,12 +240,12 @@
 ?>
 			<form action="?page=<?php echo $this->getName(); ?>&action=install" method="post">
 				<fieldset>
-					<legend>Installer / Désinstaller un module</legend>
+					<legend>Installer / Dï¿½sinstaller un module</legend>
 <?php
 
-						$buff = mysql_query('SELECT module FROM '.$this->database);
+						$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT module FROM '.$this->database);
 						$modules = array();
-						while($data = mysql_fetch_array($buff)) {
+						while($data = mysqli_fetch_array($buff)) {
 							$installedModules[] = $data['module'];
 						}
 						
@@ -289,7 +295,7 @@
 			{
 
 ?>
-			<li><a href="?page=<?php echo $this->getName(); ?>&action=install" title="Installer / Désinstaller un module" >Installer / Désinstaller un module</a></li>
+			<li><a href="?page=<?php echo $this->getName(); ?>&action=install" title="Installer / Dï¿½sinstaller un module" >Installer / Dï¿½sinstaller un module</a></li>
 <?php
 
 			}

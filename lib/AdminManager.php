@@ -1,4 +1,5 @@
 <?php
+  require_once("lib/AbstractModule.php");
 
 	class AdminManager extends AbstractModule {
 		
@@ -11,7 +12,13 @@
 		var $passwordUpdate;
 		var $error;
 		
-		
+
+
+		function __construct($databaseManager) {
+      $this->databaseManager = $databaseManager;
+    }
+
+
 		
 		function firstInstall() {
 			$query = 'CREATE TABLE IF NOT EXISTS `'.$this->database.'` (
@@ -20,11 +27,11 @@
 					`password` varchar(50) NOT NULL,
 					PRIMARY KEY (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 			
 			$query = 'INSERT INTO `'.$this->database.'` (`id`, `login`, `password`) VALUES
 				(1, "admin", "c3f1105baf0171ef727255f36e79b2c5");';
-			mysql_query($query) OR DIE (mysql_error());
+			mysqli_query($this->databaseManager->mysqli, $query) OR DIE (mysqli_error());
 		}
 		
 		
@@ -37,8 +44,8 @@
 					{
 						$login=$_POST['login'];
 						$password=md5($this->sault.$_POST['password']);
-						$buff = mysql_query('SELECT id, login, password FROM '.$this->database);
-						while($donnees = mysql_fetch_array($buff))
+						$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, login, password FROM '.$this->database);
+						while($donnees = mysqli_fetch_array($buff))
 						{
 							if ($login==$donnees['login'] && $password==$donnees['password'])
 							{
@@ -75,9 +82,9 @@
 						{
 							$login=$_POST['oldId'];
 							$password=md5($this->sault.$_POST['oldPass']);
-							$buff = mysql_query('SELECT id, login, password FROM '.$this->database);
+							$buff = mysqli_query($this->databaseManager->mysqli, 'SELECT id, login, password FROM '.$this->database);
 							$id = 0;
-							while ( $data = mysql_fetch_array($buff) )
+							while ( $data = mysqli_fetch_array($buff) )
 							{
 								if ($login==$data['login'] && $password==$data['password'])
 								{
@@ -91,13 +98,13 @@
 								{
 									if ( $_POST['newId']==$_POST['newId2'] )
 									{
-										$newId = mysql_real_escape_string($_POST['newId']);
-										mysql_query('UPDATE '.$this->database.' SET login = "'.$newId.'" WHERE id = '.$id) OR DIE (mysql_error());
-										$this->loginUpdate = 'Le changement d\'identifiant à bien été effectué';
+										$newId = mysqli_real_escape_string($_POST['newId']);
+										mysqli_query($this->databaseManager->mysqli, 'UPDATE '.$this->database.' SET login = "'.$newId.'" WHERE id = '.$id) OR DIE (mysqli_error());
+										$this->loginUpdate = 'Le changement d\'identifiant ï¿½ bien ï¿½tï¿½ effectuï¿½';
 									}
 									else
 									{
-										$this->loginError = 'Les identifiants doivent être identiques.';
+										$this->loginError = 'Les identifiants doivent ï¿½tre identiques.';
 									}
 								}
 								
@@ -106,12 +113,12 @@
 									if ( !empty($_POST['newPass']) && $_POST['newPass']==$_POST['newPass2'] )
 									{
 										$newPass = md5($this->sault.$_POST['newPass']);
-										mysql_query('UPDATE '.$this->database.' SET password = "'.$newPass.'" WHERE id = '.$id) OR DIE (mysql_error());
-										$this->passwordUpdate = 'Le changement de mot de passe à bien été effectué.';
+										mysqli_query($this->databaseManager->mysqli, 'UPDATE '.$this->database.' SET password = "'.$newPass.'" WHERE id = '.$id) OR DIE (mysqli_error());
+										$this->passwordUpdate = 'Le changement de mot de passe ï¿½ bien ï¿½tï¿½ effectuï¿½.';
 									}
 									else
 									{
-										$this->passwordError = 'Les password doivent être identiques.';
+										$this->passwordError = 'Les password doivent ï¿½tre identiques.';
 									}
 								}
 							}
@@ -137,7 +144,7 @@
 					<fieldset class="center" >
 						<legend>Rappel de l'identifiant et mot de passe actuel</legend>
 						<p>
-							Doit être rempli pour pouvoir procéder au changement d'une quelconque donnée.
+							Doit ï¿½tre rempli pour pouvoir procï¿½der au changement d'une quelconque donnï¿½e.
 						</p>
 						<p>
 							<label for="oldId"><strong>Identifiant de connexion :</strong></label><br/>
@@ -212,7 +219,7 @@
 			{
 
 ?>
-			<li><a href="?page=<?php echo $this->getName(); ?>&action=logout" title="Déconnexion" >Déconnexion</a></li>
+			<li><a href="?page=<?php echo $this->getName(); ?>&action=logout" title="Dï¿½connexion" >Dï¿½connexion</a></li>
 			<li><a href="?page=<?php echo $this->getName(); ?>&action=changeId" title="Changer identifiant et password" >Changer identifiant et password</a></li>
 <?php
 
