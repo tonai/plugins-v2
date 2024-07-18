@@ -1,0 +1,593 @@
+*
+{
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}
+
+.left
+{
+	float: left;
+}
+
+.right
+{
+	float: right;
+}
+
+.breaker
+{
+	clear: both;
+}
+
+.error
+{
+	color: red;
+}
+
+.petit
+{
+	font-size: 70%;
+}
+
+.center
+{
+	text-align: center;
+}
+
+a
+{
+	color: #919191;
+	font-weight: bold;
+}
+
+a:hover
+{
+	color: #dcdcdc;
+}
+
+a:focus, a:active
+{
+	outline: none;
+}
+
+input:focus, textarea:focus
+{
+	background-color: #d2dae1;
+}
+
+h1
+{
+	margin-bottom: 20px;
+}
+
+h1, h2, h3
+{
+	text-align: center;
+}
+
+p, ol
+{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+ul
+{
+	list-style: none;
+}
+
+strong, legend
+{
+	color: #919191;
+}
+
+fieldset
+ {
+	width: 100%;
+	padding: 10px;
+	border: 2px solid white;
+	-moz-border-radius: 5px;
+}
+
+body
+{
+	background-color: black;
+	color: white;
+	text-align: justify;
+}
+
+#page
+{
+	margin: auto;
+	width: 1000px;
+	position: relative;
+}
+
+#header
+{
+	margin-top: 20px;
+	position: relative;
+	width: 1000px;
+	height: 200px;
+	background-image: url('logo.jpg');
+}
+
+#menu
+{
+	position: absolute;
+	bottom: 0px;
+	text-align: center;
+}
+	
+	#menu ul li
+	{
+		width: 90px;
+		height: 50px;
+		float: left;
+	}
+		
+		#menu ul li a, #menu ul li span
+		{
+			padding-top: 15px;
+			display: block;
+			width: 90px;
+			height: 35px;
+			text-align: center;
+			color: white;
+			font-weight: bold;
+			text-decoration: none;
+		}
+		
+		#menu ul li ul
+		{
+			position: relative;
+			padding-top: 0px;
+			display: none;
+			z-index: 30;
+		}
+		
+		#menu ul li:hover ul
+		{
+			display: block;
+			margin-left: -45px;
+		}
+		
+		#menu ul li:hover a, #menu ul li:hover span
+		{
+			background-color: #dcdcdc;
+			color: black;
+			filter: alpha(opacity=75);
+			-moz-opacity: 0.75;
+			-khtml-opacity: 0.75;
+			opacity: 0.75;
+		}
+		
+			#menu ul li ul li
+			{
+				float: none;
+				width: 180px;
+				height: 25px;
+				margin-top: -1px;
+			}
+			
+				#menu ul li ul li a
+				{
+					padding-top: 5px;
+					width: 180px;
+					height: 20px;
+					background-color: #dcdcdc;
+					color: black;
+					font-size: 80%;
+				}
+				
+				#menu ul li ul li a:hover
+				{
+					background-color: #919191;
+					color: white;
+				}
+			
+.accueil a, .accueil h1, .accueil legend, .accueil strong
+{
+	color: #bf8ebf;
+}
+
+.accueil a:hover
+{
+	color: #dfc6df;
+}
+
+	#menu ul .accueil a, #menu ul .accueil span
+	{
+		color: #bf8ebf;
+	}
+	
+		#menu ul .accueil:hover a, #menu ul .accueil:hover span
+		{
+			background-color: #bf8ebf;
+		}
+		
+			#menu ul .accueil ul li a:hover
+			{
+				background-color: #7e1d7e;
+				color: #dfc6df;
+			}
+
+.presentation a, .presentation h1, .presentation legend, .presentation strong
+{
+	color : #8fa2be;
+}
+
+.presentation a:hover
+{
+	color: #c7d0de;
+}
+
+	#menu ul .presentation a, #menu ul .presentation span
+	{
+		color : #8fa2be;
+	}
+	
+	#menu ul .presentation:hover a, #menu ul .presentation:hover span
+	{
+		background-color : #8fa2be;
+	}
+	
+		#menu ul .presentation ul li a:hover
+		{
+			background-color: #1e447d;
+			color: #c7d0de;
+		}
+
+.programme a, .programme h1, .programme legend, .programme strong
+{
+	color : #8ebf8e;
+}
+
+.programme a:hover
+{
+	color : #c6dfc6;
+}
+
+	#menu ul .programme a, #menu ul .programme span
+	{
+		color : #8ebf8e;
+	}
+	
+	#menu ul .programme:hover a, #menu ul .programme:hover span
+	{
+		background-color : #8ebf8e;
+	}
+	
+		#menu ul .programme ul li a:hover
+		{
+			background-color: #1d7e1d;
+			color : #c6dfc6;
+		}
+
+.galerie  a, .galerie  h1, .galerie  legend, .galerie  strong
+{
+	color : #bfbf8e;
+}
+
+.galerie  a:hover
+{
+	color : #dfdfc6;
+}
+
+	#menu ul .galerie a, #menu ul .galerie span
+	{
+		color : #bfbf8e;
+	}
+	
+	#menu ul .galerie:hover a, #menu ul .galerie:hover span
+	{
+		background-color : #bfbf8e;
+	}
+	
+		#menu ul .galerie ul li a:hover
+		{
+			background-color: #7e7e1d;
+			color : #dfdfc6;
+		}
+
+.livre_dor a, .livre_dor h1, .livre_dor legend, .livre_dor strong
+{
+	color : #bfac8e;
+}
+
+.livre_dor a:hover
+{
+	color : #dfd5c6;
+}
+
+	#menu ul .livre_dor a, #menu ul .livre_dor span
+	{
+		color : #bfac8e;
+	}
+	
+	#menu ul .livre_dor:hover a, #menu ul .livre_dor:hover span
+	{
+		background-color : #bfac8e;
+	}
+	
+		#menu ul .livre_dor ul li a:hover
+		{
+			background-color: #7e581d;
+			color : #dfd5c6;
+		}
+
+.calendrier a, .calendrier h1, .calendrier legend,  .calendrier strong
+{
+	color : #bf8f8e;
+}
+
+.calendrier a:hover
+{
+	color : #dfc7c6;
+}
+
+	#menu ul .calendrier a, #menu ul .calendrier span
+	{
+		color : #bf8f8e;
+	}
+	
+	#menu ul .calendrier:hover a, #menu ul .calendrier:hover span
+	{
+		background-color : #bf8f8e;
+	}
+	
+		#menu ul .calendrier ul li a:hover
+		{
+			background-color: #7e1f1d;
+			color : #dfc7c6;
+		}
+
+#admin-menu
+{
+	border: 1px white solid;
+	padding: 10px;
+	width: 200px;
+	position: absolute;
+	right: 0;
+	background-color: black;
+	filter: alpha(opacity=75);
+	-moz-opacity: 0.75;
+	-khtml-opacity: 0.75;
+	opacity: 0.75;
+}
+
+	#admin-menu a
+	{
+		font-weight: normal;
+	}
+
+#body
+{
+	padding-top: 20px;
+	width: 1000px;
+	margin-bottom: 20px;
+	z-index: 10;
+}
+
+#contentmanager textarea
+{
+	width: 100%;
+}
+
+#calendar table
+{
+	border: 1px solid white;
+	width: 500px;
+	margin: auto;
+}
+
+	#calendar table caption
+	{
+		border: 1px solid white;
+		padding-top: 10px;
+		height: 50px;
+		font-size: 150%;
+	}
+		#calendar table caption .right
+		{
+			margin-right: 50px;
+		}
+		
+		#calendar table caption .left
+		{
+			margin-left: 50px;
+		}
+		
+			#calendar table caption div span
+			{
+				cursor: pointer;
+			}
+		
+		#calendar table tr td
+		{
+			width: 14%;
+			height: 60px;
+			text-align: center;
+			color: black;
+			background-color: #dfc7c6;
+		}
+		
+		#calendar table tr .ferie
+		{
+			background-color: #bf8f8e;
+		}
+		
+		#calendar table tr .none
+		{
+			background-color: black;
+		}
+		
+		#calendar table tr .event
+		{
+			color: #dfc7c6;
+			background-color: #7e1f1d;
+			text-decoration: none;
+			font-size: 140%;
+			font-weight: bold;
+			cursor: pointer;
+		}
+			
+		#calendar table tr .event:hover
+		{
+			color: white;
+		}
+
+	#calendar #event
+	{
+		border: 1px white solid;
+		padding: 10px;
+		width: 230px;
+		position: absolute;
+		display: none;
+		background-color: black;
+		filter: alpha(opacity=75);
+		-moz-opacity: 0.75;
+		-khtml-opacity: 0.75;
+		opacity: 0.75;
+	}
+
+		#calendar #event p
+		{
+			margin-top: 0px;
+		}
+		
+		#calendar #event hr
+		{
+			border: 1px solid white;
+		}
+	
+	#calendar #months
+	{
+		border: 1px white solid;
+		width: 150px;
+		margin: auto;
+		background-color: black;
+		filter: alpha(opacity=75);
+		-moz-opacity: 0.75;
+		-khtml-opacity: 0.75;
+		opacity: 0.75;
+		z-index: 20;
+		display: none;
+	}
+	
+		#calendar #months a
+		{
+			display: block;
+			width: 100%;
+			background-color: #dcdcdc;
+			color: black;
+			font-size: 60%;
+			text-decoration: none;
+		}
+		
+		#calendar #months a:hover
+		{
+			background-color: #919191;
+		}
+		
+#music .title 
+{
+	margin-top: 20px;
+}
+
+	#music #player
+	{
+		text-align: center;
+	}
+	
+		#music #player strong
+		{
+			margin-left: 20px;
+		}
+
+#galery .pages {
+	text-align: center;
+}
+
+#galery strong {
+	float: left;
+	display: block;
+	width: 300px;
+}
+
+#galery label {
+	margin-left: 50px;
+}
+
+#galery table {
+	border-collapse: collapse;
+}
+
+	#galery table img {
+		padding: 0 20px;
+	}
+
+#livredor textarea
+{
+	width: 100%;
+	height: 100px;
+}
+
+#livredor input
+{
+	width: 50%;
+}
+
+#livredor .submit
+{
+	width: auto;
+}
+
+#livredor dl
+{
+	margin: 10px 0;
+}
+
+#pagemanager table
+{
+	width: 100%;
+}
+
+	#pagemanager table .option
+	{
+		text-align: center;
+		width: 20%;
+	}
+
+		#pagemanager table tr.space td
+		{
+			height: 10px;
+		}
+
+			#pagemanager table tr td span
+			{
+				margin-left: 40px;
+			}
+			
+#admin #livredor input
+{
+	width: auto;
+	margin-right: 20px;
+}
+
+#admin #galery table
+{
+	width: 100%;
+}
+
+	#admin #galery table input
+	{
+		position: relative;
+		top: -70px;
+	}
+	
+	#admin #galery table img
+	{
+		padding: 0px;
+	}
